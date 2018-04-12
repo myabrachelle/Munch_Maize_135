@@ -2,7 +2,7 @@
 #include <RGBmatrixPanel.h>
 #include <Adafruit_GFX.h>
 
-// define the wiring of the LED screen
+// Defines the wiring to the LED screen.
 const uint8_t CLK  = 8;
 const uint8_t LAT = A3;
 const uint8_t OE = 9;
@@ -10,22 +10,24 @@ const uint8_t A = A0;
 const uint8_t B = A1;
 const uint8_t C = A2;
 
-// define the wiring of the inputs
+// Define the wiring to the inputs.
 const int POTENTIOMETER_PIN_NUMBER = 5;
 const int POTENTIOMETER_PIN_Y = 4;
 const int BUTTON_PIN_NUMBER = 10;
 
-// a global variable that represents the LED screen
+// A global variable that represents the LED screen.
 RGBmatrixPanel matrix(A, B, C, CLK, LAT, OE, false);
 
-// the following functions are for printing messages
+// The following functions are for printing messages.
 void print_level(int level);
 void print_lives(int lives);
 void game_over();
 
+// Global constants for the maze sizes.
 const int SIZE_COL = 25;
 const int SIZE_ROW = 16;
 
+// Color class definition.
 class Color {
   public:
     int red;
@@ -45,7 +47,7 @@ class Color {
     }
     
     uint16_t to_333() const {
-      //return matrix.Color333(red, green, blue);
+      return matrix.Color333(red, green, blue);
     }
 };
 
@@ -60,7 +62,7 @@ const Color WHITE(4, 4, 4);
 const Color LIME(2, 4, 0);
 const Color AQUA(0, 4, 4);
 
-
+// Definition for the Player class.
 class Player {
   public:
     Player() {
@@ -69,7 +71,7 @@ class Player {
       lives = 3;
     }
     
-    // getters
+    // Getters for coordinate and lives.
     int get_x() const {
       return x;
     }
@@ -80,7 +82,7 @@ class Player {
       return lives;
     }
     
-    // setters
+    // Setters for coodrinate.
     void set_x(int x_arg) {
       x = x_arg;
     }
@@ -100,7 +102,7 @@ class Player {
       }
     }
     
-    // draws the Player
+    // Draws the Player
     void draw() {
       draw_with_rgb(AQUA); 
     }
@@ -113,12 +115,12 @@ class Player {
     void draw_with_rgb(Color color) {
         String player_arr[1][1] = {"*"};
           for(int row = 0; row < SIZE; row++) {
-            for(int col = 0; col < SIZE; col++){
+            for(int col = 0; col < SIZE; col++) {
               if(player_arr[col][row] == "#") {
                 matrix.drawPixel(x + row, y + col, color.to_333());
             }
          }
-    }
+      }
     }
 
   private:
@@ -168,10 +170,10 @@ class Game {
             "#"," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," ","#"," ",
             "#","#","#","#","#","#","#","#","#","#","#","#","#","#","#","#","#","#","#","#","#","#","#","#"," "};
             
-    for(int row = 0; row < SIZE_ROW; row++) {
-          for(int col = 0; col < SIZE_COL; col++) {
-            if(maze_array_one[col][row] == "#") {
-              matrix.drawPixel(x + row, y + col, maze_color.to_333());
+            for(int row = 0; row < SIZE_ROW; row++) {
+              for(int col = 0; col < SIZE_COL; col++) {
+                if(maze_array_one[col][row] == "#") {
+                  matrix.drawPixel(x + row, y + col, maze_color.to_333());
             }
          }
       }
@@ -207,9 +209,14 @@ class Game {
    }
   }
     }
+    private:
+    int level;
+    unsigned long time;
+    unsigned long now;
+    Player player;
   };
 
-void setup(){
+void setup() {
       matrix.setTextSize(1);
       print_lives(player.get_lives());
       delay(2000);
@@ -233,16 +240,9 @@ void setup(){
 
       matrix.print("HELP");
   }
-
-    bool get_level_cleared() {
+  bool get_level_cleared() {
         //return level_cleared();
     }
-    private:
-    int level;
-    unsigned long time;
-    unsigned long now;
-    Player player;
-};
 
 // a global variable that represents the game Space Invaders
 Game game;
