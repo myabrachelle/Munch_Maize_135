@@ -233,8 +233,7 @@ void setup(){
       print_level(level);
       delay(2000);
       matrix.fillScreen(BLACK.to_333());
-      delay(2000);
-      //DONT FORGET TO GET RID OF THIS!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+      maze_setup(1);
  }
  void update(int potentiometer_value, int potentiometer_y) {
       time = millis();
@@ -258,7 +257,6 @@ void setup(){
     unsigned long time;
     unsigned long now;
     Player player;
-    Maze maize[16];
 };
 
 // a global variable that represents the game Space Invaders
