@@ -2,7 +2,7 @@
 #include <RGBmatrixPanel.h>
 #include <Adafruit_GFX.h>
 
-// Defines the wiring to the LED screen.
+//Defines the wiring to the LED screen.
 const uint8_t CLK  = 8;
 const uint8_t LAT = A3;
 const uint8_t OE = 9;
@@ -10,24 +10,65 @@ const uint8_t A = A0;
 const uint8_t B = A1;
 const uint8_t C = A2;
 
-// Define the wiring to the inputs.
+//Define the wiring to the inputs.
 const int POTENTIOMETER_PIN_NUMBER = 5;
 const int POTENTIOMETER_PIN_Y = 4;
 const int BUTTON_PIN_NUMBER = 10;
 
-// A global variable that represents the LED screen.
+//A global variable that represents the LED screen.
 RGBmatrixPanel matrix(A, B, C, CLK, LAT, OE, false);
 
-// The following functions are for printing messages.
+//The following functions are for printing messages.
 void print_level(int level);
 void print_lives(int lives);
 void game_over();
 
-// Global constants for the maze sizes.
-const int SIZE_COL = 25;
+//Global constants for the maze sizes.
+const int SIZE_COL = 28;
 const int SIZE_ROW = 16;
 
-// Color class definition.
+//Global constant for Player and Fruit sizes.
+const int SIZE = 2;
+
+//Maze for level 1.
+const bool maze_one_array[SIZE_ROW][SIZE_COL] {
+  {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
+  {1,1,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,1,0},
+  {0,1,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,1,0},
+  {0,1,0,1,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,1,1,1,0,1,0},
+  {0,1,0,1,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,1,0,1,0},
+  {0,1,0,1,0,1,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,1,0,1,0,1,0},
+  {0,1,0,1,0,1,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,1,0,1,0},
+  {0,1,0,1,0,1,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,1,0,1,0,1,0},
+  {0,1,0,1,0,1,0,1,0,0,0,0,0,0,0,0,0,0,0,0,1,0,1,0,1,0,1,0},
+  {0,1,0,1,0,1,0,1,0,1,1,1,1,1,1,1,1,1,1,0,1,0,1,0,1,0,1,0},
+  {0,1,0,1,0,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,1,0,1,0,1,1,1,0},
+  {0,1,0,1,0,0,0,0,0,1,0,1,1,1,0,0,1,1,1,0,1,0,1,0,0,0,0,0},
+  {0,1,0,1,1,1,1,1,0,1,1,1,0,1,1,1,1,0,1,0,1,1,1,0,1,1,1,0},
+  {0,1,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,1,0,1,0},
+  {0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,1,1,1,1,1,1,1,0,1,1},
+  {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0}};
+
+//Maze for level 2.
+const bool maze_two_array[SIZE_ROW][SIZE_COL] {
+  {0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
+  {0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,1,1,1,0,1,1,1,1,0},
+  {0,1,0,0,0,0,0,0,0,0,1,0,0,0,0,1,0,1,0,1,0,1,0,1,0,0,1,0},
+  {0,1,0,1,1,1,0,1,1,1,1,0,1,1,1,1,0,0,0,1,0,1,0,1,0,1,1,0},
+  {0,1,1,1,0,1,0,1,0,0,0,0,0,0,0,1,1,1,0,1,0,1,1,1,0,1,0,0},
+  {0,0,0,0,0,1,0,1,1,1,1,1,1,0,0,0,0,1,1,1,0,0,0,0,0,1,1,0},
+  {0,1,1,1,1,1,0,0,0,0,0,0,1,0,1,0,0,0,0,1,0,1,1,1,0,0,1,0},
+  {0,1,0,0,0,1,0,1,1,1,1,0,1,0,1,0,1,1,1,1,0,1,0,1,0,0,1,0},
+  {0,1,0,1,1,1,0,1,0,0,1,0,1,0,1,1,1,0,0,0,0,1,0,1,1,1,1,0},
+  {0,1,0,1,0,0,0,1,0,1,1,0,1,0,1,0,0,0,1,1,1,1,0,0,0,0,0,0},
+  {0,1,0,1,1,1,1,1,0,0,0,0,1,0,1,0,1,1,1,0,0,0,0,1,1,1,1,0},
+  {0,1,0,0,0,0,0,0,0,1,1,1,1,0,1,0,1,0,0,0,1,1,1,1,0,0,0,0},
+  {0,1,1,1,1,1,1,1,0,1,0,0,0,0,1,0,1,1,1,1,1,1,0,0,0,1,1,1},
+  {0,0,0,0,0,0,0,1,0,1,0,1,1,1,1,0,1,0,0,0,0,1,0,1,1,1,0,0},
+  {0,1,1,1,1,1,1,1,0,1,0,1,0,0,0,0,1,1,1,1,0,1,1,1,0,1,1,0},
+  {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0}};
+  
+//Color class definition.
 class Color {
   public:
     int red;
@@ -57,86 +98,157 @@ const Color ORANGE(6, 1, 0);
 const Color YELLOW(4, 4, 0);
 const Color GREEN(0, 4, 0);
 const Color BLUE(0, 0, 4);
-const Color PURPLE(1, 0, 2);
+const Color PURPLE(1, 0, 1);
 const Color WHITE(4, 4, 4);
 const Color LIME(2, 4, 0);
 const Color AQUA(0, 4, 4);
+const Color FUSCHIA(4, 0, 1);
 
-// Definition for the Player class.
+//Definition for the Player class.
 class Player {
   public:
     Player() {
       x = 0;
-      y = 1;
+      y = 
       lives = 3;
     }
     
-    // Getters for coordinate and lives.
+    //Gets x-coordinate.
     int get_x() const {
       return x;
     }
+    
+    //Gets y-coordinate.
     int get_y() const {
       return y;
     }
+
+    //Gets Player's lives.
     int get_lives() const {
       return lives;
     }
     
-    // Setters for coodrinate.
+    //Sets x-coordinate.
     void set_x(int x_arg) {
       x = x_arg;
     }
 
+    //Sets y-coordinate.
     void set_y(int y_arg) {
       y = y_arg;
     }
     
-    // Modifies: lives
+    //Modifies Player's lives.
     void die() {
       if(lives > 0) {
         lives--;
       }
       else {
-        // FIX ME LATER PLEEEEEEEEEEEEEEEEEEEAAAAAAAAAASSSSSSSSSSSSSSSSSSSSSEEEEEEEEEEEEE
-        //game_over();
+        game_over();
       }
     }
     
-    // Draws the Player
+    //Draws the Player.
     void draw() {
-      draw_with_rgb(AQUA); 
+      draw_with_rgb(YELLOW); 
     }
     
-    // draws black where the Player used to be
+    //Draws black where the Player used to be.
     void erase() {
       draw_with_rgb(BLACK);
-    }
-
-    void draw_with_rgb(Color color) {
-        String player_arr[1][1] = {"*"};
-          for(int row = 0; row < SIZE; row++) {
-            for(int col = 0; col < SIZE; col++) {
-              if(player_arr[col][row] == "#") {
-                matrix.drawPixel(x + row, y + col, color.to_333());
-            }
-         }
-      }
     }
 
   private:
     int x;
     int y;
     int lives;
-    const int SIZE = 2;
 
-    // sets private data members x and y to initial values
+    //Initializes the Player's initial coordinates for each level.
     void initialize(int x_arg, int y_arg) {
       x = x_arg;
       y = y_arg;
     }
+    
+    //Goes through the Player array to draw in corresponding pixels.
+    void draw_with_rgb(Color color) {
+      String player_array[1][1] = {"*"};
+      for(int row = 0; row < SIZE; row++) {
+        for(int col = 0; col < SIZE; col++) {
+          if(player_array[col][row] == "*") {
+            matrix.drawPixel(x + row, y + col, color.to_333());
+          }
+        }
+      }
+    }
 };
 
+//Definition for the Fruit class.
+class Fruit {
+  public:
+    Fruit() {
+      x = 0;
+      y = 0;
+    }
 
+    bool has_been_collected(bool collected) {
+      return collected;
+    }
+
+    //Gets x-coordinate.
+    int get_x() const {
+      return x;
+    }
+
+    //Gets y-coordinate.
+    int get_y() const {
+      return y;
+    }
+
+    //Sets x-coordinate.
+    void set_x(int x_arg) {
+      x = x_arg;
+    }
+
+    //Sets y-coordinate.
+    void set_y(int y_arg) {
+      y = y_arg;
+    }
+
+    //Draws the Fruit.
+    void draw(Color fruit_color) {
+      draw_with_rgb(fruit_color); 
+    }
+    
+    //Draws black where the Fruit used to be.
+    void erase() {
+      draw_with_rgb(BLACK);
+    }
+
+private:
+  int x;
+  int y;
+  bool collected;
+
+  //Initializes the Fruit's initial coordinates for each level.
+  void initialize(int x_arg, int y_arg) {
+    x = x_arg;
+    y = y_arg;
+  }
+
+  //Goes through Fruit array to draw in corresponding pixels.
+  void draw_with_rgb(Color color) {
+    String fruit_array[1][1] = {"*"};
+      for(int row = 0; row < SIZE; row++) {
+        for(int col = 0; col < SIZE; col++) {
+          if(fruit_array[col][row] == "*") {
+            matrix.drawPixel(x + row, y + col, color.to_333());
+          }
+        }
+      }
+  }
+};
+
+//Definition of the Game class.
 class Game {
   public:
     Game() {
@@ -144,105 +256,98 @@ class Game {
       time = 0;
     }
 
-    // non-default constructor for Game constructor 
-    Game(int level_arg){
-      level = level_arg;
-    }
-
+    //Sets up mazes.
     void maze_setup(int level) {
-      if(level == 1) {
-        void draw_with_rgb(Color maze_color) {
-          String maze_array_one[SIZE_COL][SIZE_ROW] {
-            "#"," ","#","#","#","#","#","#","#","#","#","#","#","#","#","#","#","#","#","#","#","#","#","#","#",
-            "#"," ","#"," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," ","#"," ","#",
-            "#"," ","#"," ","#","#","#"," ","#","#","#","#","#","#","#","#","#","#","#","#","#"," ","#"," ","#",
-            "#"," ","#"," ","#"," ","#"," "," "," ","#"," "," "," "," "," "," "," "," ","#"," "," ","#"," ","#",
-            "#"," ","#"," ","#"," ","#","#","#"," ","#"," ","#","#","#","#","#","#","#","#"," ","#","#"," ","#",
-            "#"," ","#"," ","#"," "," "," ","#"," ","#"," ","#"," "," "," ","#"," "," "," "," "," "," "," ","#",
-            "#"," ","#"," ","#"," ","#"," ","#"," ","#"," "," "," ","#"," "," "," ","#"," "," ","#","#","#","#",
-            "#"," ","#"," ","#"," ","#"," ","#"," ","#","#","#","#","#","#","#","#","#","#"," "," "," "," ","#",
-            "#"," ","#"," ","#"," ","#"," ","#"," "," "," "," "," "," "," "," "," "," ","#"," ","#","#"," ","#",
-            "#"," ","#"," ","#"," ","#","#","#","#","#","#","#","#","#","#","#","#"," ","#"," ","#"," "," ","#",
-            "#"," ","#"," ","#"," "," "," "," "," "," "," "," "," "," "," "," ","#"," ","#"," ","#","#"," ","#",
-            "#"," ","#"," ","#","#","#"," ","#","#","#","#","#","#","#","#","#","#"," ","#","#","#","#","#","#",
-            "#"," ","#"," "," "," ","#"," "," "," "," "," "," "," "," "," "," ","#"," "," "," "," "," "," "," ",
-            "#"," ","#","#","#"," ","#","#","#","#","#","#","#","#","#","#"," ","#","#","#","#","#","#","#"," ",
-            "#"," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," ","#"," ",
-            "#","#","#","#","#","#","#","#","#","#","#","#","#","#","#","#","#","#","#","#","#","#","#","#"," "};
-            
-            for(int row = 0; row < SIZE_ROW; row++) {
-              for(int col = 0; col < SIZE_COL; col++) {
-                if(maze_array_one[col][row] == "#") {
-                  matrix.drawPixel(x + row, y + col, maze_color.to_333());
-            }
-         }
-      }
-   }
- }
-  if(level == 2) {
-    void draw_with_rgb_two(Color maze_color) {
-          bool maze_array_two[SIZE_COL][SIZE_ROW] {
-            1,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,
-            1,0,1,0,0,0,1,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,1,0,1,
-            1,0,1,0,1,0,0,1,1,0,1,1,0,1,1,1,1,1,1,1,1,0,1,0,1,
-            1,0,1,0,0,1,0,0,0,0,1,0,0,0,0,0,0,0,0,1,0,0,1,0,1,
-            1,0,1,1,0,1,0,1,1,1,1,0,1,1,1,0,1,1,0,1,0,1,1,0,1,
-            1,0,1,0,0,1,0,1,0,0,1,0,1,0,0,0,1,0,0,0,0,1,0,0,1,
-            1,0,1,1,1,1,0,1,1,0,1,0,0,0,1,0,1,0,1,0,0,1,1,1,1,
-            1,0,1,1,1,1,0,1,0,0,0,0,1,1,1,1,0,1,1,1,0,0,0,0,1,
-            1,0,0,0,0,0,0,0,0,1,1,1,0,0,0,0,0,1,0,0,0,1,1,0,1,
-            1,1,1,1,1,1,1,1,1,1,0,1,0,1,1,1,1,1,0,1,0,1,0,0,1,
-            1,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,1,0,1,0,1,1,0,1,
-            1,0,1,0,1,1,1,0,1,1,1,1,1,1,1,1,1,1,0,1,1,1,0,0,1,
-            1,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,1,0,1,1,
-            1,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,1,1,1,0,1,0,1,1,
-            1,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,
-            1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,};
-            
-    for(int row = 0; row < SIZE_ROW; row++) {
-          for(int col = 0; col < SIZE_COL; col++) {
-            if(maze_array_two[col][row] == 1) {
-              matrix.drawPixel(x + row, y + col, maze_color.to_333());
-            }
-         }
-      }
-   }
-  }
-    }
-    private:
-    int level;
-    unsigned long time;
-    unsigned long now;
-    Player player;
-  };
-
-void setup() {
-      matrix.setTextSize(1);
-      print_lives(player.get_lives());
-      delay(2000);
       matrix.fillScreen(BLACK.to_333());
-      matrix.setCursor(0, 0);
-      print_level(level);
-      delay(2000);
-      matrix.fillScreen(BLACK.to_333());
-      maze_setup(1);
- }
- void update(int potentiometer_value, int potentiometer_y) {
-      time = millis();
       
+      if(level == 1) {
+        for(int row = 0; row < SIZE_ROW; row++) {
+          for(int col = 0; col < SIZE_COL; col++) {
+            if(maze_one_array[row][col] == 0) {
+              matrix.drawPixel(col, row, BLUE.to_333());
+            }
+          }
+        }
+      }
+      if(level == 2) {
+        for(int row = 0; row < SIZE_ROW; row++) {
+          for(int col = 0; col < SIZE_COL; col++) {
+            if(maze_two_array[row][col] == 0) {
+              matrix.drawPixel(col, row, BLUE.to_333());
+            }
+          }
+        }
+      }
+    }
+    
+    void setup() {
+        maze_setup(1);
+        
+        player.set_x(0);
+        player.set_y(1);
+        player.draw();
+        
+        orange.set_x(26);
+        orange.set_y(1);
+        orange.draw(ORANGE);
+        
+        cherry.set_x(20);
+        cherry.set_y(3);
+        cherry.draw(RED);
+        
+        passionfruit.set_x(16);
+        passionfruit.set_y(14);
+        passionfruit.draw(FUSCHIA);
+    }
+    
+    void update(int potentiometer_value, int potentiometer_y) {
+      time = millis();
+
       player.erase();
       player.set_x(potentiometer_value / 32);
-      player.draw();
-
-      player.erase();
       player.set_y(potentiometer_y / 16);
       player.draw();
 
-      matrix.print("HELP");
-  }
-  bool get_level_cleared() {
-        //return level_cleared();
+      if(level == 1) {
+        
+      }
+
+      if(level == 2) {
+        maze_setup(2);
+        player.set_x(1);
+        player.set_y(0);
+        player.draw();
+
+        orange.set_x(16);
+        orange.set_y(14);
+        orange.draw(ORANGE);
+        
+        cherry.set_x(1);
+        cherry.set_y(14);
+        cherry.draw(RED);
+        
+        passionfruit.set_x(19);
+        passionfruit.set_y(14);
+        passionfruit.draw(FUSCHIA);
+      }
     }
+    
+    bool get_level_cleared() {
+      return level_cleared();
+    }
+
+private:
+  int level;
+  unsigned long time;
+  unsigned long now;
+  Player player;
+  Fruit orange;
+  Fruit cherry;
+  Fruit passionfruit;
+  
+  bool level_cleared() {
+  }
+};
 
 // a global variable that represents the game Space Invaders
 Game game;
