@@ -30,27 +30,8 @@ const int SIZE_ROW = 16;
 //Global constant for Player and Fruit sizes.
 const int SIZE = 2;
 
-//Maze for level 1.
-const bool maze_one_array[SIZE_ROW][SIZE_COL] {
-  {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
-  {1,1,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,1,0},
-  {0,1,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,1,0},
-  {0,1,0,1,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,1,1,1,0,1,0},
-  {0,1,0,1,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,1,0,1,0},
-  {0,1,0,1,0,1,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,1,0,1,0,1,0},
-  {0,1,0,1,0,1,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,1,0,1,0},
-  {0,1,0,1,0,1,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,1,0,1,0,1,0},
-  {0,1,0,1,0,1,0,1,0,0,0,0,0,0,0,0,0,0,0,0,1,0,1,0,1,0,1,0},
-  {0,1,0,1,0,1,0,1,0,1,1,1,1,1,1,1,1,1,1,0,1,0,1,0,1,0,1,0},
-  {0,1,0,1,0,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,1,0,1,0,1,1,1,0},
-  {0,1,0,1,0,0,0,0,0,1,0,1,1,1,0,0,1,1,1,0,1,0,1,0,0,0,0,0},
-  {0,1,0,1,1,1,1,1,0,1,1,1,0,1,1,1,1,0,1,0,1,1,1,0,1,1,1,0},
-  {0,1,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,1,0,1,0},
-  {0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,1,1,1,1,1,1,1,0,1,1},
-  {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0}};
-
-//Maze for level 2.
-const bool maze_two_array[SIZE_ROW][SIZE_COL] {
+//Our only maze, unfortunately. :(
+const bool maze_array[SIZE_ROW][SIZE_COL] {
   {0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
   {0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,1,1,1,0,1,1,1,1,0},
   {0,1,0,0,0,0,0,0,0,0,1,0,0,0,0,1,0,1,0,1,0,1,0,1,0,0,1,0},
@@ -127,15 +108,41 @@ class Player {
     int get_lives() const {
       return lives;
     }
+
+    //Initializes the Player's initial coordinates for each level.
+    void initialize(int x_arg, int y_arg) {
+      x = x_arg;
+      y = y_arg;
+    }
     
     //Sets x-coordinate.
     void set_x(int x_arg) {
-      x = x_arg;
+      if(x_arg >= 0 && x_arg < 32) {
+        x = x_arg;
+      }
+      else {
+        if(x_arg < 0) {
+          x = 0;
+        }
+        if(x_arg > 32) {
+          x = 31;
+        }
+      }
     }
 
     //Sets y-coordinate.
     void set_y(int y_arg) {
-      y = y_arg;
+      if(y_arg >= 0 && y_arg < 16) {
+        y = y_arg;
+      }
+      else {
+        if(y_arg < 0) {
+          y = 0;
+        }
+        if(y_arg > 16) {
+          y = 15;
+        }
+      }
     }
     
     //Modifies Player's lives.
@@ -162,12 +169,6 @@ class Player {
     int x;
     int y;
     int lives;
-
-    //Initializes the Player's initial coordinates for each level.
-    void initialize(int x_arg, int y_arg) {
-      x = x_arg;
-      y = y_arg;
-    }
     
     //Goes through the Player array to draw in corresponding pixels.
     void draw_with_rgb(Color color) {
@@ -204,6 +205,12 @@ class Fruit {
       return y;
     }
 
+    //Initializes the Fruit's initial coordinates for each level.
+    void initialize(int x_arg, int y_arg) {
+      x = x_arg;
+      y = y_arg;
+    }
+
     //Sets x-coordinate.
     void set_x(int x_arg) {
       x = x_arg;
@@ -229,12 +236,6 @@ private:
   int y;
   bool collected;
 
-  //Initializes the Fruit's initial coordinates for each level.
-  void initialize(int x_arg, int y_arg) {
-    x = x_arg;
-    y = y_arg;
-  }
-
   //Goes through Fruit array to draw in corresponding pixels.
   void draw_with_rgb(Color color) {
     String fruit_array[1][1] = {"*"};
@@ -256,79 +257,59 @@ class Game {
       time = 0;
     }
 
-    //Sets up mazes.
-    void maze_setup(int level) {
+    //Sets up maze.
+    void maze_setup() {
       matrix.fillScreen(BLACK.to_333());
       
-      if(level == 1) {
-        for(int row = 0; row < SIZE_ROW; row++) {
-          for(int col = 0; col < SIZE_COL; col++) {
-            if(maze_one_array[row][col] == 0) {
-              matrix.drawPixel(col, row, BLUE.to_333());
-            }
+      for(int row = 0; row < SIZE_ROW; row++) {
+        for(int col = 0; col < SIZE_COL; col++) {
+          if(maze_array[row][col] == 0) {
+            matrix.drawPixel(col, row, BLUE.to_333());
           }
         }
       }
-      if(level == 2) {
-        for(int row = 0; row < SIZE_ROW; row++) {
-          for(int col = 0; col < SIZE_COL; col++) {
-            if(maze_two_array[row][col] == 0) {
-              matrix.drawPixel(col, row, BLUE.to_333());
-            }
-          }
+    }
+
+    //Draws clock.
+    void clock_setup(int y) {
+      for(int row = 0; row < 4; row++) {
+        for(int col = y; col < y + 4; col++) {
+          matrix.drawPixel(col, row, WHITE.to_333());
         }
       }
     }
     
     void setup() {
-        maze_setup(1);
-        
-        player.set_x(0);
-        player.set_y(1);
+        maze_setup();
+
+        player.initialize(1, 0);
         player.draw();
         
-        orange.set_x(26);
-        orange.set_y(1);
+        orange.initialize(19, 14);
         orange.draw(ORANGE);
         
-        cherry.set_x(20);
-        cherry.set_y(3);
+        cherry.initialize(9, 14);
         cherry.draw(RED);
         
-        passionfruit.set_x(16);
-        passionfruit.set_y(14);
+        passionfruit.initialize(1, 14);
         passionfruit.draw(FUSCHIA);
+
+        clock_setup(28);
+        clock_time = millis();
     }
     
     void update(int potentiometer_value, int potentiometer_y) {
       time = millis();
 
       player.erase();
-      player.set_x(potentiometer_value / 32);
+      player.set_x(potentiometer_value / 32); 
       player.set_y(potentiometer_y / 16);
-      player.draw();
-
-      if(level == 1) {
-        
+      if(maze_array[player.get_y()][player.get_x()] != 0) {
+        player.draw();
       }
 
-      if(level == 2) {
-        maze_setup(2);
-        player.set_x(1);
-        player.set_y(0);
-        player.draw();
-
-        orange.set_x(16);
-        orange.set_y(14);
-        orange.draw(ORANGE);
-        
-        cherry.set_x(1);
-        cherry.set_y(14);
-        cherry.draw(RED);
-        
-        passionfruit.set_x(19);
-        passionfruit.set_y(14);
-        passionfruit.draw(FUSCHIA);
+      if(player.get_x() == passionfruit.get_x() && player.get_y() == passionfruit.get_y()) {
+        time - 5000;
       }
     }
     
@@ -344,6 +325,12 @@ private:
   Fruit orange;
   Fruit cherry;
   Fruit passionfruit;
+  bool clock_array[4][4] {
+    {0,0,0,0},
+    {0,0,0,0},
+    {0,0,0,0},
+    {0,0,0,0}};
+  unsigned long clock_time;
   
   bool level_cleared() {
   }
@@ -363,6 +350,8 @@ void setup() {
 void loop() {
   int potentiometer_value = analogRead(POTENTIOMETER_PIN_NUMBER);
   int potentiometer_y = analogRead(POTENTIOMETER_PIN_Y);
+
+  game.update(potentiometer_value, potentiometer_y);
 }
 
 
