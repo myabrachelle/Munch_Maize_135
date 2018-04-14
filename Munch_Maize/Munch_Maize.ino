@@ -278,6 +278,18 @@ class Game {
         }
       }
     }
+    //Countdown for clock
+    void clock_countdown() {
+      if(time = 5000){
+        for(int row = 0; row < 2; row++){
+          for(int col = 0; col < 2; col++){
+            if(clock_array[row][col] == 0) {
+              matrix.drawPixel(col, row, BLACK.to_333());
+            }
+          }
+        }
+      }
+    }
     
     void setup() {
         maze_setup();
@@ -296,6 +308,7 @@ class Game {
 
         clock_setup(28);
         clock_time = millis();
+        clock_countdown();
     }
     
     void update(int potentiometer_value, int potentiometer_y) {
