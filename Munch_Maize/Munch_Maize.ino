@@ -189,9 +189,11 @@ class Fruit {
     Fruit() {
       x = 0;
       y = 0;
+      collected = false;
     }
 
-    bool has_been_collected(bool collected) {
+    //Getter for collected value.
+    bool has_been_collected() {
       return collected;
     }
 
@@ -219,6 +221,11 @@ class Fruit {
     //Sets y-coordinate.
     void set_y(int y_arg) {
       y = y_arg;
+    }
+
+    //Sets collected variable to true.
+    void has_been_picked() {
+      collected = true;
     }
 
     //Draws the Fruit.
@@ -270,6 +277,16 @@ class Game {
       }
     }
 
+    //This is the collection function, assumedly. Let it werk, Mama!
+    void fruit_collection(Fruit fruit) {
+      if(player.get_x() == fruit.get_x() && player.get_y() == fruit.get_y()) {
+        if(fruit.has_been_collected() == false && time > 0) {
+          fruit.has_been_picked();
+          time -= 5000;
+        }
+      }
+    }
+
     //Draws clock.
     void clock_setup(int y) {
       for(int row = 0; row < 4; row++) {
@@ -278,12 +295,13 @@ class Game {
         }
       }
     }
+    
     //Countdown for clock
     void clock_countdown() {
-      if(time = 5000){
-        for(int row = 0; row < 2; row++){
-          for(int col = 0; col < 2; col++){
-            if(clock_array[row][col] == 0) {
+      if(time = 5000) {
+        for(int row = 0; row < 2; row++) {
+          for(int col = 0; col < 2; col++) {
+            if(clock_array[row][col] == 0)  {
               matrix.drawPixel(col, row, BLACK.to_333());
             }
           }
@@ -320,15 +338,11 @@ class Game {
       if(maze_array[player.get_y()][player.get_x()] != 0) {
         player.draw();
       }
-
-      if(player.get_x() == passionfruit.get_x() && player.get_y() == passionfruit.get_y()) {
-        time - 5000;
+    }
+      
+      bool get_level_cleared() {
+        return level_cleared();
       }
-    }
-    
-    bool get_level_cleared() {
-      return level_cleared();
-    }
 
 private:
   int level;
