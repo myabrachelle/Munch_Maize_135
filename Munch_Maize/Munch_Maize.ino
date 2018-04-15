@@ -19,6 +19,7 @@ const int BUTTON_PIN_NUMBER = 10;
 RGBmatrixPanel matrix(A, B, C, CLK, LAT, OE, false);
 
 //The following functions are for printing messages.
+void print_opening();
 void print_level(int level);
 void print_lives(int lives);
 void game_over();
@@ -329,6 +330,17 @@ class Game {
     }
      
     void setup() {
+        //Printing starting values for player
+        matrix.setTextSize(1);
+        print_opening();
+        delay(2000);
+        matrix.fillScreen(BLACK.to_333());
+        print_level(1);
+        delay(2000);
+        matrix.fillScreen(BLACK.to_333());
+        print_lives(3);
+        delay(2000);
+      
         maze_setup();
 
         player.initialize(1, 0);
@@ -405,6 +417,10 @@ void loop() {
   game.update(potentiometer_value, potentiometer_y);
 }
 
+// Displays the opening message.
+void print_opening() {
+  matrix.print("Munch Maize");
+}
 
 // Displays the level number.
 void print_level(int level) {
