@@ -90,7 +90,7 @@ class Player {
   public:
     Player() {
       x = 0;
-      y = 
+      y = 0;
       lives = 3;
     }
     
@@ -288,9 +288,9 @@ class Game {
     }
 
     //Draws clock.
-    void clock_setup(int y) {
+    void clock_setup() {
       for(int row = 0; row < 4; row++) {
-        for(int col = y; col < y + 4; col++) {
+        for(int col = 28; col < 32; col++) {
           matrix.drawPixel(col, row, WHITE.to_333());
         }
       }
@@ -298,17 +298,36 @@ class Game {
     
     //Countdown for clock
     void clock_countdown() {
-      if(time = 5000) {
-        for(int row = 0; row < 2; row++) {
-          for(int col = 0; col < 2; col++) {
-            if(clock_array[row][col] == 0)  {
-              matrix.drawPixel(col, row, BLACK.to_333());
-            }
-          }
-        }
+      if(time % 5000 == 0) {
+        matrix.drawPixel(31, 0, BLACK.to_333());
+        matrix.drawPixel(31, 1, BLACK.to_333());
+        matrix.drawPixel(30, 0, BLACK.to_333());
+        matrix.drawPixel(30, 1, BLACK.to_333());       
       }
+      if(time >= 10000) {
+        matrix.drawPixel(31, 2, BLACK.to_333());
+        matrix.drawPixel(31, 3, BLACK.to_333());
+        matrix.drawPixel(30, 2, BLACK.to_333());
+        matrix.drawPixel(30, 3, BLACK.to_333());
+      }
+      if(time >= 15000) {
+        matrix.drawPixel(29, 2, BLACK.to_333());
+        matrix.drawPixel(29, 3, BLACK.to_333());
+        matrix.drawPixel(28, 2, BLACK.to_333());
+        matrix.drawPixel(28, 3, BLACK.to_333());
+      }
+      if(time >= 20000) {
+        matrix.drawPixel(29, 0, BLACK.to_333());
+        matrix.drawPixel(29, 1, BLACK.to_333());
+        matrix.drawPixel(28, 0, BLACK.to_333());
+        matrix.drawPixel(28, 1, BLACK.to_333());
+      } 
+      if(time >= 21000) {
+        player.erase();
+        game_over();
+       }
     }
-    
+     
     void setup() {
         maze_setup();
 
@@ -324,20 +343,25 @@ class Game {
         passionfruit.initialize(1, 14);
         passionfruit.draw(FUSCHIA);
 
-        clock_setup(28);
+        clock_setup();
         clock_time = millis();
-        clock_countdown();
     }
     
     void update(int potentiometer_value, int potentiometer_y) {
       time = millis();
-
       player.erase();
       player.set_x(potentiometer_value / 32); 
       player.set_y(potentiometer_y / 16);
+      player.draw();
+     
       if(maze_array[player.get_y()][player.get_x()] != 0) {
+        player.erase();
+        player.set_x((potentiometer_value / 32) - 1); 
+        player.set_y((potentiometer_y / 16) - 1);
         player.draw();
+        matrix.drawPixel(potentiometer_value, potentiometer_y, BLUE.to_333());
       }
+      clock_countdown();
     }
       
       bool get_level_cleared() {
@@ -396,5 +420,7 @@ void print_lives(int lives) {
 
 // Displays "Game Over!" message when player dies. 
 void game_over() {
-    matrix.print("Game Over!");
+  matrix.fillScreen(BLACK.to_333());
+  matrix.print("Game Over!");
+  delay(1000);
 }
