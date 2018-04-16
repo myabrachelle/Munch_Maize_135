@@ -85,6 +85,7 @@ const Color WHITE(4, 4, 4);
 const Color LIME(2, 4, 0);
 const Color AQUA(0, 4, 4);
 const Color FUSCHIA(4, 0, 1);
+const Color BROWN(0, 7, 3);
 
 //Definition for the Player class.
 class Player {
@@ -257,6 +258,77 @@ private:
   }
 };
 
+//Definition of the Bird class.
+class Bird {
+  public:
+    Bird() {
+      x = 0;
+      y = 0;
+    }
+    
+    //Gets x-coordinate.
+    int get_x() const {
+      return x;
+    }
+    
+    //Gets y-coordinate.
+    int get_y() const {
+      return y;
+    }
+
+
+    //Initializes the Bird's initial coordinates for each level.
+    void initialize(int x_arg, int y_arg) {
+      x = x_arg;
+      y = y_arg;
+    }
+    
+    //Sets x-coordinate.
+    void set_x(int x_arg) {
+      x = x_arg;
+    }
+
+    //Sets y-coordinate.
+    void set_y(int y_arg) {
+      y = y_arg;
+    }
+    
+    //Draws the Bird.
+    void draw() {
+      draw_with_rgb(BROWN); 
+    }
+    
+    //Draws black where the Player used to be.
+    void erase() {
+      draw_with_rgb(BLACK);
+    }
+
+    void move_left(int x_arg) {
+      while(x > x_arg) {
+        //erase();
+        x--;
+        //draw();
+      }
+    }
+
+  private:
+    int x;
+    int y;
+    int lives;
+    
+    //Goes through the Player array to draw in corresponding pixels.
+    void draw_with_rgb(Color color) {
+      String player_array[1][1] = {"*"};
+      for(int row = 0; row < SIZE; row++) {
+        for(int col = 0; col < SIZE; col++) {
+          if(player_array[col][row] == "*") {
+            matrix.drawPixel(x + row, y + col, color.to_333());
+          }
+        }
+      }
+    }
+};
+
 //Definition of the Game class.
 class Game {
   public:
@@ -297,38 +369,38 @@ class Game {
       }
     }
     
-    //Countdown for clock
+    //Countdown for clock.
     void clock_countdown() {
-      if(time % 5000 == 0) {
+      if(time >= 11000) {
         matrix.drawPixel(31, 0, BLACK.to_333());
         matrix.drawPixel(31, 1, BLACK.to_333());
         matrix.drawPixel(30, 0, BLACK.to_333());
         matrix.drawPixel(30, 1, BLACK.to_333());       
       }
-      if(time >= 10000) {
+      if(time >= 16000) {
         matrix.drawPixel(31, 2, BLACK.to_333());
         matrix.drawPixel(31, 3, BLACK.to_333());
         matrix.drawPixel(30, 2, BLACK.to_333());
         matrix.drawPixel(30, 3, BLACK.to_333());
       }
-      if(time >= 15000) {
+      if(time >= 21000) {
         matrix.drawPixel(29, 2, BLACK.to_333());
         matrix.drawPixel(29, 3, BLACK.to_333());
         matrix.drawPixel(28, 2, BLACK.to_333());
         matrix.drawPixel(28, 3, BLACK.to_333());
       }
-      if(time >= 20000) {
+      if(time >= 26000) {
         matrix.drawPixel(29, 0, BLACK.to_333());
         matrix.drawPixel(29, 1, BLACK.to_333());
         matrix.drawPixel(28, 0, BLACK.to_333());
         matrix.drawPixel(28, 1, BLACK.to_333());
       } 
-      if(time >= 21000) {
-        player.erase();
+      if(time >= 31000) {
+        //player.erase();
         //see what these lines do on board
-        //player.die();
-        //print_lives(player.get_lives());
-        game_over();
+        player.die();
+        print_lives(player.get_lives());
+        //game_over();
        }
     }
      
@@ -343,7 +415,7 @@ class Game {
         matrix.fillScreen(BLACK.to_333());
         print_lives(3);
         delay(2000);
-      
+        
         maze_setup();
 
         player.initialize(1, 0);
@@ -357,6 +429,9 @@ class Game {
         
         passionfruit.initialize(1, 14);
         passionfruit.draw(FUSCHIA);
+
+        dove.initialize(17, 1);
+        dove.draw();
 
         clock_setup();
         clock_time = millis();
@@ -376,6 +451,10 @@ class Game {
         player.draw();
         matrix.drawPixel(potentiometer_value, potentiometer_y, BLUE.to_333());
       }
+      dove.erase();
+      dove.move_left(3);
+      dove.draw();
+      
       clock_countdown();
     }
       
@@ -391,6 +470,7 @@ private:
   Fruit orange;
   Fruit cherry;
   Fruit passionfruit;
+  Bird dove;
   bool clock_array[4][4] {
     {0,0,0,0},
     {0,0,0,0},
@@ -440,6 +520,6 @@ void print_lives(int lives) {
 // Displays "Game Over!" message when player dies. 
 void game_over() {
   matrix.fillScreen(BLACK.to_333());
-  matrix.print("Game Over!");
+  matrix.print("Time's Up!");
   delay(1000);
 }
