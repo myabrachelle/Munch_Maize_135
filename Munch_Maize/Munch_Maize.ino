@@ -325,6 +325,9 @@ class Game {
       } 
       if(time >= 21000) {
         player.erase();
+        //see what these lines do on board
+        //player.die();
+        //print_lives(player.get_lives());
         game_over();
        }
     }
