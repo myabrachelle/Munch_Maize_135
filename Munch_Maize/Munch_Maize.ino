@@ -199,6 +199,7 @@ class Player {
     }
     */
 
+    // here is the checker for the walls hopefully
     bool checker_for_maze(int potentiometer_value, int potentiometer_y) {
       if (maze_array[0][0] == false) {
         x = ((potentiometer_value / 32) + 1);
