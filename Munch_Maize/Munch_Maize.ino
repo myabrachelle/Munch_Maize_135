@@ -13,7 +13,6 @@ const uint8_t C = A2;
 //Define the wiring to the inputs.
 const int POTENTIOMETER_PIN_NUMBER = 5;
 const int POTENTIOMETER_PIN_Y = 4;
-const int BUTTON_PIN_NUMBER = 10;
 
 //A global variable that represents the LED screen.
 RGBmatrixPanel matrix(A, B, C, CLK, LAT, OE, false);
@@ -91,7 +90,7 @@ const Color BROWN(0, 7, 3);
 class Player {
   public:
     Player() {
-      x = 0;
+      x = 1;
       y = 0;
       lives = 3;
     }
@@ -109,12 +108,6 @@ class Player {
     //Gets Player's lives.
     int get_lives() const {
       return lives;
-    }
-
-    //Initializes the Player's initial coordinates for each level.
-    void initialize(int x_arg, int y_arg) {
-      x = x_arg;
-      y = y_arg;
     }
     
     //Sets x-coordinate.
@@ -159,13 +152,51 @@ class Player {
     
     //Draws the Player.
     void draw() {
-      draw_with_rgb(YELLOW); 
+      draw_with_rgb(WHITE); 
     }
     
     //Draws black where the Player used to be.
     void erase() {
       draw_with_rgb(BLACK);
     }
+    
+    //Checks to see if there is wall on right
+    bool check_right(int potentiometer_value){
+      /*if (x == maze_array[3][2]) {
+        erase();
+        x = (potentiometer_value / 32) - 1;
+        draw();
+      } */
+      if(((potentiometer_value / 32) + 1) == maze_array[potentiometer_value - 1][y]){
+        x = (potentiometer_value / 32) - 1;
+        draw();
+      } 
+    }
+    
+    //Checks to see if there is wall on left
+    bool check_left(int potentiometer_value){
+      if(((potentiometer_value / 32) - 1) == maze_array[potentiometer_value - 1][y]){
+        x = (potentiometer_value / 32) + 1;
+        draw();
+      }
+    }
+
+    //Checks to see if there is a wall above
+    bool check_up(int potentiometer_y){
+      if((potentiometer_y / 16) + 1 == maze_array[x][potentiometer_y - 1]){
+        y = (potentiometer_y / 16) - 1;
+        draw();
+      }
+    }
+
+    //Checks to see if there is a wall below
+    bool check_down(int potentiometer_y){
+      if((potentiometer_y / 16) - 1 == maze_array[x][potentiometer_y - 1]){
+         y = (potentiometer_y / 16) + 1;
+        draw();
+      }
+    }
+
 
   private:
     int x;
@@ -174,10 +205,10 @@ class Player {
     
     //Goes through the Player array to draw in corresponding pixels.
     void draw_with_rgb(Color color) {
-      String player_array[1][1] = {"*"};
-      for(int row = 0; row < SIZE; row++) {
-        for(int col = 0; col < SIZE; col++) {
-          if(player_array[col][row] == "*") {
+      char player_array[1][1] = {'*'};
+      for (int row = 0; row < 1; row++) {
+        for (int col = 0; col < 1; col++) {
+          if (player_array[col][row] == '*') {
             matrix.drawPixel(x + row, y + col, color.to_333());
           }
         }
@@ -295,7 +326,7 @@ class Bird {
     
     //Draws the Bird.
     void draw() {
-      draw_with_rgb(BROWN); 
+      draw_with_rgb(WHITE); 
     }
     
     //Draws black where the Player used to be.
@@ -303,13 +334,16 @@ class Bird {
       draw_with_rgb(BLACK);
     }
 
-    void move_left(int x_arg) {
-      while(x > x_arg) {
+    void move() {
+      erase();
+      x++;
+      draw();
+      }
+      /*while(x > x_arg) {
         //erase();
         x--;
         //draw();
-      }
-    }
+      } */
 
   private:
     int x;
@@ -410,16 +444,15 @@ class Game {
         print_opening();
         delay(2000);
         matrix.fillScreen(BLACK.to_333());
+        matrix.setCursor(0, 0);
         print_level(1);
         delay(2000);
         matrix.fillScreen(BLACK.to_333());
+        matrix.setTextSize(1);
         print_lives(3);
         delay(2000);
         
         maze_setup();
-
-        player.initialize(1, 0);
-        player.draw();
         
         orange.initialize(19, 14);
         orange.draw(ORANGE);
@@ -432,7 +465,6 @@ class Game {
 
         dove.initialize(17, 1);
         dove.draw();
-
         clock_setup();
         clock_time = millis();
     }
@@ -440,20 +472,34 @@ class Game {
     void update(int potentiometer_value, int potentiometer_y) {
       time = millis();
       player.erase();
+      
+      /*player.check_right(potentiometer_value / 32);
+      player.check_left(potentiometer_value / 32);
+      player.check_up(potentiometer_y);
+      player.check_down(potentiometer_y); */
+      
       player.set_x(potentiometer_value / 32); 
       player.set_y(potentiometer_y / 16);
       player.draw();
-     
-      if(maze_array[player.get_y()][player.get_x()] != 0) {
+      
+      /*if(maze_array[player.get_y()][player.get_x()] != 0) {
         player.erase();
-        player.set_x((potentiometer_value / 32) - 1); 
-        player.set_y((potentiometer_y / 16) - 1);
+        player.set_x(potentiometer_value / 32); 
+        player.set_y(potentiometer_y / 16);
         player.draw();
         matrix.drawPixel(potentiometer_value, potentiometer_y, BLUE.to_333());
+      } */
+
+     /* while (dove.get_x() == 0) {
+        for (int count = 0; count < 18; count++) {
+          dove.move();
+        }
       }
-      dove.erase();
-      dove.move_left(3);
-      dove.draw();
+      while (dove.get_x() == 17) {
+        for (int count = 17; count > 0; count--) {
+          dove.move();
+        }
+      } */
       
       clock_countdown();
     }
@@ -487,7 +533,7 @@ Game game;
 
 void setup() {
   Serial.begin(9600);
-  pinMode(BUTTON_PIN_NUMBER, INPUT);
+  //pinMode(BUTTON_PIN_NUMBER, INPUT);
   matrix.begin();
   game.setup();
 }
@@ -502,7 +548,7 @@ void loop() {
 
 // Displays the opening message.
 void print_opening() {
-  matrix.print("Munch Maize");
+  matrix.print("MunchMaize");
 }
 
 // Displays the level number.
