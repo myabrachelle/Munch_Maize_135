@@ -109,18 +109,24 @@ class Player {
     int get_lives() const {
       return lives;
     }
+
+    // sets private data members x and y to initial values
+    void initialize(int x_arg, int y_arg) {
+      x = x_arg;
+      y = y_arg;
+    }
     
     //Sets x-coordinate.
     void set_x(int x_arg) {
-      if(x_arg >= 0 && x_arg < 32) {
+      if(x_arg > 0 && x_arg < 32) {
         x = x_arg;
       }
       else {
-        if(x_arg < 0) {
-          x = 0;
+        if(x_arg <= 0) {
+          x = 1;
         }
-        if(x_arg > 32) {
-          x = 31;
+        if(x_arg > 26) {
+          x = 26;
         }
       }
     }
@@ -131,11 +137,11 @@ class Player {
         y = y_arg;
       }
       else {
-        if(y_arg < 0) {
-          y = 0;
+        if(y_arg <= 0) {
+          y = 1;
         }
-        if(y_arg > 16) {
-          y = 15;
+        if(y_arg >= 15) {
+          y = 14;
         }
       }
     }
@@ -152,7 +158,7 @@ class Player {
     
     //Draws the Player.
     void draw() {
-      draw_with_rgb(WHITE); 
+      draw_with_rgb(YELLOW); 
     }
     
     //Draws black where the Player used to be.
@@ -201,45 +207,10 @@ class Player {
 
     // here is the checker for the walls hopefully
     bool checker_for_maze(int potentiometer_value, int potentiometer_y) {
-      if (maze_array[0][0] == false) {
-        x = ((potentiometer_value / 32) + 1);
-        draw();
-      }
-      if (maze_array[0][1] == false) {
-        x = ((potentiometer_value / 32) + 1);
-        draw();
-      }
-      if (maze_array[0][2] == false) {
-        x = ((potentiometer_value / 32) + 1);
-        draw();
-      }
-      if (maze_array[0][3] == false) {
-        x = ((potentiometer_value / 32) + 1);
-        draw();
-      }
-      if (maze_array[0][4] == false) {
-        x = ((potentiometer_value / 32) + 1);
-        draw();
-      }
-      if (maze_array[2][0] == false) {
-        x = ((potentiometer_value / 32) - 1);
-        draw();
-      }
-      if (maze_array[2][0] == false) {
-        x = ((potentiometer_y / 32) + 1);
-        draw();
-      }
-      if (maze_array[2][2] == false) {
-        x = ((potentiometer_value / 32) + 1);
-        draw();
-      }
-      if (maze_array[2][2] == false) {
-        x = ((potentiometer_y / 32) - 1);
-        draw();
-      }
-      if (maze_array[2][3] == false) {
-        x = ((potentiometer_value / 32) + 1);
-        draw();
+      if (y == 1 && x >= 2 && x <= 9) {
+        set_x(potentiometer_value);
+        set_y(1);
+        draw(); 
       }
     }
 
@@ -372,7 +343,7 @@ class Bird {
     
     //Draws the Bird.
     void draw() {
-      draw_with_rgb(WHITE); 
+      draw_with_rgb(BROWN); 
     }
     
     //Draws black where the Player used to be.
@@ -479,7 +450,10 @@ class Game {
         //player.erase();
         //see what these lines do on board
         player.die();
+        matrix.fillScreen(BLACK.to_333());
+        matrix.setCursor(0, 0);
         print_lives(player.get_lives());
+        delay(1000);
         //game_over();
        }
     }
@@ -494,6 +468,7 @@ class Game {
         print_level(1);
         delay(2000);
         matrix.fillScreen(BLACK.to_333());
+        matrix.setCursor(0, 0);
         matrix.setTextSize(1);
         print_lives(3);
         delay(2000);
@@ -509,8 +484,8 @@ class Game {
         passionfruit.initialize(1, 14);
         passionfruit.draw(FUSCHIA);
 
-        //dove.initialize(17, 1);
-        //dove.draw();
+        dove.initialize(17, 1);
+        dove.draw();
         
         clock_setup();
         clock_time = millis();
@@ -519,6 +494,16 @@ class Game {
     void update(int potentiometer_value, int potentiometer_y) {
       time = millis();
       player.erase();
+
+      /*if (potentiometer_value <= 312) {
+        player.set_x(player.get_x()-1);
+      }
+      else if (potentiometer_value >= 712) {
+        player.set_x(player.get_x()+1);
+      }
+      else {
+        player.set_x(player.get_x());
+      } */
       
       /*player.check_right(potentiometer_value / 32);
       player.check_left(potentiometer_value / 32);
@@ -552,7 +537,7 @@ class Game {
       clock_countdown();
     }
       
-      bool get_level_cleared() {
+  bool get_level_cleared() {
         return level_cleared();
       }
 
@@ -581,7 +566,6 @@ Game game;
 
 void setup() {
   Serial.begin(9600);
-  //pinMode(BUTTON_PIN_NUMBER, INPUT);
   matrix.begin();
   game.setup();
 }
@@ -614,6 +598,7 @@ void print_lives(int lives) {
 // Displays "Game Over!" message when player dies. 
 void game_over() {
   matrix.fillScreen(BLACK.to_333());
+  matrix.setCursor(0, 0);
   matrix.print("Time's Up!");
   delay(1000);
 }
