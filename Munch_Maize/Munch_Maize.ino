@@ -159,14 +159,15 @@ class Player {
     void erase() {
       draw_with_rgb(BLACK);
     }
-    
+
+    /*
     //Checks to see if there is wall on right
     bool check_right(int potentiometer_value){
-      /*if (x == maze_array[3][2]) {
+      if (x == maze_array[3][2]) {
         erase();
         x = (potentiometer_value / 32) - 1;
         draw();
-      } */
+      } 
       if(((potentiometer_value / 32) + 1) == maze_array[potentiometer_value - 1][y]){
         x = (potentiometer_value / 32) - 1;
         draw();
@@ -193,6 +194,50 @@ class Player {
     bool check_down(int potentiometer_y){
       if((potentiometer_y / 16) - 1 == maze_array[x][potentiometer_y - 1]){
          y = (potentiometer_y / 16) + 1;
+        draw();
+      }
+    }
+    */
+
+    bool checker_for_maze(int potentiometer_value, int potentiometer_y) {
+      if (maze_array[0][0] == false) {
+        x = ((potentiometer_value / 32) + 1);
+        draw();
+      }
+      if (maze_array[0][1] == false) {
+        x = ((potentiometer_value / 32) + 1);
+        draw();
+      }
+      if (maze_array[0][2] == false) {
+        x = ((potentiometer_value / 32) + 1);
+        draw();
+      }
+      if (maze_array[0][3] == false) {
+        x = ((potentiometer_value / 32) + 1);
+        draw();
+      }
+      if (maze_array[0][4] == false) {
+        x = ((potentiometer_value / 32) + 1);
+        draw();
+      }
+      if (maze_array[2][0] == false) {
+        x = ((potentiometer_value / 32) - 1);
+        draw();
+      }
+      if (maze_array[2][0] == false) {
+        x = ((potentiometer_y / 32) + 1);
+        draw();
+      }
+      if (maze_array[2][2] == false) {
+        x = ((potentiometer_value / 32) + 1);
+        draw();
+      }
+      if (maze_array[2][2] == false) {
+        x = ((potentiometer_y / 32) - 1);
+        draw();
+      }
+      if (maze_array[2][3] == false) {
+        x = ((potentiometer_value / 32) + 1);
         draw();
       }
     }
@@ -463,8 +508,9 @@ class Game {
         passionfruit.initialize(1, 14);
         passionfruit.draw(FUSCHIA);
 
-        dove.initialize(17, 1);
-        dove.draw();
+        //dove.initialize(17, 1);
+        //dove.draw();
+        
         clock_setup();
         clock_time = millis();
     }
@@ -477,6 +523,7 @@ class Game {
       player.check_left(potentiometer_value / 32);
       player.check_up(potentiometer_y);
       player.check_down(potentiometer_y); */
+      player.checker_for_maze(potentiometer_value, potentiometer_y);
       
       player.set_x(potentiometer_value / 32); 
       player.set_y(potentiometer_y / 16);
