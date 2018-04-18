@@ -33,12 +33,12 @@ const int SIZE = 2;
 //Our only maze, unfortunately. :(
 const bool maze_array[SIZE_ROW][SIZE_COL] {
   {0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
-  {0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,1,1,1,0,1,1,1,1,0},
-  {0,1,0,0,0,0,0,0,0,0,1,0,0,0,0,1,0,1,0,1,0,1,0,1,0,0,1,0},
+  {0,1,1,1,1,0,1,1,1,1,1,1,1,1,1,1,1,1,0,1,1,1,0,1,1,1,1,0},
+  {0,1,0,1,0,0,0,0,0,0,1,0,0,0,0,1,0,1,0,1,0,1,0,1,0,0,1,0},
   {0,1,0,1,1,1,0,1,1,1,1,0,1,1,1,1,0,0,0,1,0,1,0,1,0,1,1,0},
   {0,1,1,1,0,1,0,1,0,0,0,0,0,0,0,1,1,1,0,1,0,1,1,1,0,1,0,0},
-  {0,0,0,0,0,1,0,1,1,1,1,1,1,0,0,0,0,1,1,1,0,0,0,0,0,1,1,0},
-  {0,1,1,1,1,1,0,0,0,0,0,0,1,0,1,0,0,0,0,1,0,1,1,1,0,0,1,0},
+  {0,0,0,1,0,1,0,1,1,1,1,1,1,0,0,0,0,1,1,1,0,0,0,0,0,1,1,0},
+  {0,1,1,0,1,1,0,0,0,0,0,0,1,0,1,0,0,0,0,1,0,1,1,1,0,0,1,0},
   {0,1,0,0,0,1,0,1,1,1,1,0,1,0,1,0,1,1,1,1,0,1,0,1,0,0,1,0},
   {0,1,0,1,1,1,0,1,0,0,1,0,1,0,1,1,1,0,0,0,0,1,0,1,1,1,1,0},
   {0,1,0,1,0,0,0,1,0,1,1,0,1,0,1,0,0,0,1,1,1,1,0,0,0,0,0,0},
@@ -137,10 +137,10 @@ class Player {
         y = y_arg;
       }
       else {
-        if(y_arg <= 0) {
+        if(y_arg < 0) {
           y = 1;
         }
-        if(y_arg >= 15) {
+        if(y_arg > 15) {
           y = 14;
         }
       }
@@ -166,54 +166,25 @@ class Player {
       draw_with_rgb(BLACK);
     }
 
-    /*
-    //Checks to see if there is wall on right
-    bool check_right(int potentiometer_value){
-      if (x == maze_array[3][2]) {
-        erase();
-        x = (potentiometer_value / 32) - 1;
-        draw();
-      } 
-      if(((potentiometer_value / 32) + 1) == maze_array[potentiometer_value - 1][y]){
-        x = (potentiometer_value / 32) - 1;
-        draw();
-      } 
-    }
-    
-    //Checks to see if there is wall on left
-    bool check_left(int potentiometer_value){
-      if(((potentiometer_value / 32) - 1) == maze_array[potentiometer_value - 1][y]){
-        x = (potentiometer_value / 32) + 1;
-        draw();
+    //Player move function.
+    int move(int move_val) {
+      //Moves the Player right.
+      if (move_val == 1) {
+        return x += 1;
+      }
+      //Moves the Player left.
+      if(move_val == 2) {
+        return x -= 1;
+      }
+      //Moves the Player down. 
+      if (move_val == 3) {
+        return y += 1;
+      }
+      //Moves the Player up.
+      if(move_val == 4) {
+        return y -= 1;
       }
     }
-
-    //Checks to see if there is a wall above
-    bool check_up(int potentiometer_y){
-      if((potentiometer_y / 16) + 1 == maze_array[x][potentiometer_y - 1]){
-        y = (potentiometer_y / 16) - 1;
-        draw();
-      }
-    }
-
-    //Checks to see if there is a wall below
-    bool check_down(int potentiometer_y){
-      if((potentiometer_y / 16) - 1 == maze_array[x][potentiometer_y - 1]){
-         y = (potentiometer_y / 16) + 1;
-        draw();
-      }
-    }
-    */
-
-    // here is the checker for the walls hopefully
-    bool checker_for_maze(int potentiometer_value, int potentiometer_y) {
-      if (y == 1 && x >= 2 && x <= 9) {
-        set_x(potentiometer_value);
-        set_y(1);
-        draw(); 
-      }
-    }
-
 
   private:
     int x;
@@ -446,7 +417,7 @@ class Game {
         matrix.drawPixel(28, 0, BLACK.to_333());
         matrix.drawPixel(28, 1, BLACK.to_333());
       } 
-      if(time >= 31000) {
+      /*if(time >= 31000) {
         //player.erase();
         //see what these lines do on board
         player.die();
@@ -455,7 +426,7 @@ class Game {
         print_lives(player.get_lives());
         delay(1000);
         //game_over();
-       }
+       }*/
     }
      
     void setup() {
@@ -484,8 +455,12 @@ class Game {
         passionfruit.initialize(1, 14);
         passionfruit.draw(FUSCHIA);
 
-        dove.initialize(17, 1);
-        dove.draw();
+        //dove.initialize(17, 1);
+        //dove.draw();
+
+        player.initialize(1, 0);
+
+        counter = 0;
         
         clock_setup();
         clock_time = millis();
@@ -493,35 +468,39 @@ class Game {
     
     void update(int potentiometer_value, int potentiometer_y) {
       time = millis();
+      counter++;
+
       player.erase();
 
-      /*if (potentiometer_value <= 312) {
-        player.set_x(player.get_x()-1);
+      //Half of 1,024 = 512;
+      if (counter % 100 == 0) {
+        if (potentiometer_y < 312) {
+          if ((player.get_y() + 1) < 16 && maze_array[player.get_x()][player.get_y() + 1] != 0) {
+            player.move(4);
+          }
+        }
+        if (potentiometer_y > 712) {
+          if ((player.get_y() - 1) >= 0 && maze_array[player.get_x()][player.get_y() - 1] != 0) {
+            player.move(3);
+          }
+        }
       }
-      else if (potentiometer_value >= 712) {
-        player.set_x(player.get_x()+1);
+      if (counter % 100 == 0) {
+        if (potentiometer_value < 312) {
+          if ((player.get_x() - 1) >= 0 && maze_array[player.get_x() - 1][player.get_y()] != 0) {
+            player.move(2);
+          }
+        }
+        if (potentiometer_value > 712) {
+          if ((player.get_x() + 1) < 28 && maze_array[player.get_x() + 1][player.get_y()] != 0) {
+            player.move(1);
+          }
+        }
       }
-      else {
-        player.set_x(player.get_x());
-      } */
-      
-      /*player.check_right(potentiometer_value / 32);
-      player.check_left(potentiometer_value / 32);
-      player.check_up(potentiometer_y);
-      player.check_down(potentiometer_y); */
-      player.checker_for_maze(potentiometer_value, potentiometer_y);
-      
-      player.set_x(potentiometer_value / 32); 
-      player.set_y(potentiometer_y / 16);
+
       player.draw();
       
-      /*if(maze_array[player.get_y()][player.get_x()] != 0) {
-        player.erase();
-        player.set_x(potentiometer_value / 32); 
-        player.set_y(potentiometer_y / 16);
-        player.draw();
-        matrix.drawPixel(potentiometer_value, potentiometer_y, BLUE.to_333());
-      } */
+      
 
      /* while (dove.get_x() == 0) {
         for (int count = 0; count < 18; count++) {
@@ -545,16 +524,12 @@ private:
   int level;
   unsigned long time;
   unsigned long now;
+  unsigned long counter;
   Player player;
   Fruit orange;
   Fruit cherry;
   Fruit passionfruit;
   Bird dove;
-  bool clock_array[4][4] {
-    {0,0,0,0},
-    {0,0,0,0},
-    {0,0,0,0},
-    {0,0,0,0}};
   unsigned long clock_time;
   
   bool level_cleared() {
