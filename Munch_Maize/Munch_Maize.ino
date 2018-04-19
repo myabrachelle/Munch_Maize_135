@@ -22,6 +22,7 @@ void print_opening();
 void print_level(int level);
 void print_lives(int lives);
 void game_over();
+void winning_message();
 
 //Global constants for the maze sizes.
 const int SIZE_COL = 28;
@@ -100,7 +101,7 @@ class Player {
     Player() {
       x = 1;
       y = 0;
-      lives = 3;
+      lives = 1;
     }
     
     //Gets x-coordinate.
@@ -345,33 +346,39 @@ class Game {
     }
     
     void level_setup(int level) {
-      if (time == 0) {
+      if( time == 0) {
         if(level == 1) {
-          passionfruit.initialize(19, 14);
-          passionfruit.draw(FUSCHIA);
+           passionfruit.initialize(19, 14);
+           passionfruit.draw(FUSCHIA);
         }
-        if(level == 2) {
-          matrix.fillScreen(BLACK.to_333());
-          matrix.setCursor(0, 0);
-          print_level(level);
-          delay(2000);
+      if(level == 2) {
+        matrix.fillScreen(BLACK.to_333());
+        matrix.setCursor(0, 0);
+        print_level(level);
+        delay(2000);
           
-          maze_setup();
+        maze_setup();
+        clock_setup();
           
-          player.initialize(1, 0);
-          passionfruit.initialize(9, 9);
-          passionfruit.draw(FUSCHIA);
+        player.initialize(1, 0);
+          
+        passionfruit.initialize(9, 9);
+        passionfruit.draw(FUSCHIA);
 
-          orange.initialize(19, 14);
-          orange.draw(ORANGE);
-        }
-        if(level == 3) {
-          matrix.fillScreen(BLACK.to_333());
-          matrix.setCursor(0, 0);
-          print_level(level);
+        orange.initialize(19, 14);
+        orange.draw(ORANGE);
+
+      }
+      if(level == 3) {
+        matrix.fillScreen(BLACK.to_333());
+        matrix.setCursor(0, 0);
+        print_level(level);
           delay(2000);
           
           maze_setup();
+          clock_setup();
+
+          player.initialize(1, 0);
           
           passionfruit.initialize(1, 14);
           passionfruit.draw(FUSCHIA);
@@ -382,6 +389,10 @@ class Game {
           cherry.initialize(9, 14);
           cherry.draw(RED);
         }
+      if (level > 4) {
+        player.erase();
+        winning_message();
+      }
        }
     }
 
@@ -396,31 +407,31 @@ class Game {
     
     //Countdown for clock.
     void clock_countdown() {
-      if(time >= 36000) {
+      if(time >= 66000) {
         matrix.drawPixel(31, 0, BLACK.to_333());
         matrix.drawPixel(31, 1, BLACK.to_333());
         matrix.drawPixel(30, 0, BLACK.to_333());
         matrix.drawPixel(30, 1, BLACK.to_333());       
       }
-      if(time >= 66000) {
+      if(time >= 126000) {
         matrix.drawPixel(31, 2, BLACK.to_333());
         matrix.drawPixel(31, 3, BLACK.to_333());
         matrix.drawPixel(30, 2, BLACK.to_333());
         matrix.drawPixel(30, 3, BLACK.to_333());
       }
-      if(time >= 96000) {
+      if(time >= 186000) {
         matrix.drawPixel(29, 2, BLACK.to_333());
         matrix.drawPixel(29, 3, BLACK.to_333());
         matrix.drawPixel(28, 2, BLACK.to_333());
         matrix.drawPixel(28, 3, BLACK.to_333());
       }
-      if(time >= 126000) {
+      if(time >= 240000) {
         matrix.drawPixel(29, 0, BLACK.to_333());
         matrix.drawPixel(29, 1, BLACK.to_333());
         matrix.drawPixel(28, 0, BLACK.to_333());
         matrix.drawPixel(28, 1, BLACK.to_333());
       } 
-      if(time >= 126100) {
+      if(time >= 240100) {
         time = 0;
         if(player.get_lives() > 0) {
           player.erase();
@@ -462,7 +473,7 @@ class Game {
         matrix.fillScreen(BLACK.to_333());
         matrix.setCursor(0, 0);
         matrix.setTextSize(1);
-        print_lives(3);
+        print_lives(1);
         delay(2000);
         
         maze_setup();
@@ -542,7 +553,7 @@ private:
       return true;
     }
     if(level == 2) {
-      if(time <= 126000) {
+      if(time <= 240000) {
         if(belly > 1) {
           if(player.get_x() == 27 && player.get_y() == 12) {
             level++;
@@ -604,3 +615,11 @@ void game_over() {
   matrix.print("Time Out!");
   delay(1000);
 }
+
+void winning_message() {
+  matrix.fillScreen(BLACK.to_333());
+  matrix.setCursor(0, 0);
+  matrix.print("You  Win");
+  delay(1000);
+}
+
