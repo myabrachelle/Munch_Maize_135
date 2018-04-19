@@ -138,11 +138,9 @@ class Player {
       }
     }
     
-    //Modifies Player's lives.
-    void die() {
-      if(lives > 0) {
-        lives--;
-      }
+    //Sets Player's lives.
+    void set_lives(int lives_arg) {
+      lives = lives_arg;
     }
     
     //Draws the Player.
@@ -179,17 +177,6 @@ class Fruit {
     Fruit() {
       x = 0;
       y = 0;
-      eaten = false;
-    }
-
-    //Getter for collected value.
-    bool has_been_eaten() {
-      return eaten;
-    }
-
-    //Sets collected variable to true.
-    void true_eats() {
-      eaten = true;
     }
 
     //Gets x-coordinate.
@@ -231,7 +218,6 @@ class Fruit {
 private:
   int x;
   int y;
-  bool eaten;
 
   //Goes through Fruit array to draw in corresponding pixels.
   void draw_with_rgb(Color color) {
@@ -341,18 +327,26 @@ class Game {
       }
     }
 
+    int get_level() {
+      return level;
+    }
+
     //This is the collection function, assumedly. Let it werk, Mama!
-    void eating_fruit(Fruit fruit) {
+    bool eating_fruit(Fruit fruit) {
       if(player.get_x() == fruit.get_x() && player.get_y() == fruit.get_y()) {
-        fruit.true_eats();
+          fruit.set_x(31);
+          fruit.set_y(16);
+          belly += 1;
+          return true;
       }
-      if(fruit.has_been_eaten() == true) {
-        belly++;
+      else {
+        return false;
       }
     }
+    
     void level_setup(int level) {
-       if (time == 0) {
-       if(level == 1) {         
+      if (time == 0) {
+        if(level == 1) {
           passionfruit.initialize(19, 14);
           passionfruit.draw(FUSCHIA);
         }
@@ -361,6 +355,7 @@ class Game {
           matrix.setCursor(0, 0);
           print_level(level);
           delay(2000);
+          
           maze_setup();
           
           player.initialize(1, 0);
@@ -371,6 +366,13 @@ class Game {
           orange.draw(ORANGE);
         }
         if(level == 3) {
+          matrix.fillScreen(BLACK.to_333());
+          matrix.setCursor(0, 0);
+          print_level(level);
+          delay(2000);
+          
+          maze_setup();
+          
           passionfruit.initialize(1, 14);
           passionfruit.draw(FUSCHIA);
           
@@ -418,16 +420,32 @@ class Game {
         matrix.drawPixel(28, 0, BLACK.to_333());
         matrix.drawPixel(28, 1, BLACK.to_333());
       } 
-      if(time > 126100) {
-        player.erase();
-        //see what these lines do on board
-        player.die();
-        matrix.fillScreen(BLACK.to_333());
-        matrix.setCursor(0, 0);
-        print_lives(player.get_lives());
-        delay(1000);
-        //game_over();
-       }
+      if(time >= 126100) {
+        time = 0;
+        if(player.get_lives() > 0) {
+          player.erase();
+          matrix.fillScreen(BLACK.to_333());
+          matrix.setCursor(0, 0);
+          game_over();
+          delay(1000);
+          
+          matrix.fillScreen(BLACK.to_333());
+          matrix.setCursor(0, 0);
+          print_lives(player.get_lives() - 1);
+          delay(1000);
+          
+          level_setup(get_level());
+        }
+        
+        if(player.get_lives() == 0) {
+          player.erase();
+          matrix.fillScreen(BLACK.to_333());
+          matrix.setCursor(0, 0);
+          print_lives(player.get_lives());
+          delay(1000);
+          game_over();
+        }
+      }
     }
      
     void setup() {
@@ -435,10 +453,12 @@ class Game {
         matrix.setTextSize(1);
         print_opening();
         delay(2000);
+        
         matrix.fillScreen(BLACK.to_333());
         matrix.setCursor(0, 0);
         print_level(1);
         delay(2000);
+        
         matrix.fillScreen(BLACK.to_333());
         matrix.setCursor(0, 0);
         matrix.setTextSize(1);
@@ -452,9 +472,8 @@ class Game {
         level_setup(1);
         
         counter = 0;
-        
+
         clock_setup();
-        clock_time = millis();
     }
     
     void update(int potentiometer_x, int potentiometer_y) {
@@ -483,41 +502,19 @@ class Game {
           if(maze_array[player.get_y()][player.get_x() +1] == true) {
             player.set_x(player.get_x() + 1);
           }
-          if (maze_array[3][4] == false) {
-            player.set_x(player.get_x() - 1); 
-          }
         }
       }
 
       player.draw();
 
-      /*if(level == 1) {
-        eating_fruit(passionfruit);
-      }
-      if(level == 2) {
-        eating_fruit(passionfruit);
-        eating_fruit(orange);
-      }
-      if(level == 3) {
-        eating_fruit(passionfruit);
-        eating_fruit(orange);
-        eating_fruit(cherry);
-      } */
+      eating_fruit(passionfruit);
+      eating_fruit(orange);
+      eating_fruit(cherry);
+     
       
       if(get_level_cleared() == true) {
         level_setup(level);        
       }
-
-      /* while (dove.get_x() == 0) {
-        for (int count = 0; count < 18; count++) {
-          dove.move();
-        }
-      }
-      while (dove.get_x() == 17) {
-        for (int count = 17; count > 0; count--) {
-          dove.move();
-        }
-      } */
       
       clock_countdown();
     }
@@ -528,12 +525,10 @@ class Game {
 
 private:
   int level = 1;
+  int belly = 0;
   unsigned long time;
   unsigned long now;
   unsigned long counter;
-  unsigned long clock_time;
-  bool exited = true;
-  int belly = 0;
   Player player;
   Fruit orange;
   Fruit cherry;
@@ -541,32 +536,24 @@ private:
   Bird dove;
   
   bool level_cleared() {
-    if(level == 1) {
-      //if(time <= 126000) {
-        if(belly == 1) {
-          if(player.get_x() == 27 && player.get_y() == 12) {
-            level++;
-            time = 0;
-            //level_setup(level);
-            return true;
-          }
-        }
-      //}
+    if(level == 1 && belly > 1 && player.get_lives() > 0 && player.get_x() == 27 && player.get_y() == 12) {
+      level++;
+      time = 0;
+      return true;
     }
     if(level == 2) {
       if(time <= 126000) {
-        if(belly == 2) {
+        if(belly > 1) {
           if(player.get_x() == 27 && player.get_y() == 12) {
             level++;
             time = 0;
-            level_setup(level);
             return true;
           }
         }
       }
     }
     if(level == 3) {
-      if(belly == 3) {
+      if(belly > 1) {
         level++;
         time = 0;
         level_setup(level);
