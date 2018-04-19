@@ -350,6 +350,38 @@ class Game {
         belly++;
       }
     }
+    void level_setup(int level) {
+       if (time == 0) {
+       if(level == 1) {         
+          passionfruit.initialize(19, 14);
+          passionfruit.draw(FUSCHIA);
+        }
+        if(level == 2) {
+          matrix.fillScreen(BLACK.to_333());
+          matrix.setCursor(0, 0);
+          print_level(level);
+          delay(2000);
+          maze_setup();
+          
+          player.initialize(1, 0);
+          passionfruit.initialize(9, 9);
+          passionfruit.draw(FUSCHIA);
+
+          orange.initialize(19, 14);
+          orange.draw(ORANGE);
+        }
+        if(level == 3) {
+          passionfruit.initialize(1, 14);
+          passionfruit.draw(FUSCHIA);
+          
+          orange.initialize(14, 6);
+          orange.draw(FUSCHIA);
+
+          cherry.initialize(9, 14);
+          cherry.draw(RED);
+        }
+       }
+    }
 
     //Draws clock.
     void clock_setup() {
@@ -362,31 +394,31 @@ class Game {
     
     //Countdown for clock.
     void clock_countdown() {
-      if(time >= 21000) {
+      if(time >= 36000) {
         matrix.drawPixel(31, 0, BLACK.to_333());
         matrix.drawPixel(31, 1, BLACK.to_333());
         matrix.drawPixel(30, 0, BLACK.to_333());
         matrix.drawPixel(30, 1, BLACK.to_333());       
       }
-      if(time >= 36000) {
+      if(time >= 66000) {
         matrix.drawPixel(31, 2, BLACK.to_333());
         matrix.drawPixel(31, 3, BLACK.to_333());
         matrix.drawPixel(30, 2, BLACK.to_333());
         matrix.drawPixel(30, 3, BLACK.to_333());
       }
-      if(time >= 51000) {
+      if(time >= 96000) {
         matrix.drawPixel(29, 2, BLACK.to_333());
         matrix.drawPixel(29, 3, BLACK.to_333());
         matrix.drawPixel(28, 2, BLACK.to_333());
         matrix.drawPixel(28, 3, BLACK.to_333());
       }
-      if(time >= 66000) {
+      if(time >= 126000) {
         matrix.drawPixel(29, 0, BLACK.to_333());
         matrix.drawPixel(29, 1, BLACK.to_333());
         matrix.drawPixel(28, 0, BLACK.to_333());
         matrix.drawPixel(28, 1, BLACK.to_333());
       } 
-      if(time > 66000) {
+      if(time > 126100) {
         player.erase();
         //see what these lines do on board
         player.die();
@@ -417,27 +449,7 @@ class Game {
 
         player.initialize(1, 0);
 
-        if(level == 1) {
-          passionfruit.initialize(19, 14);
-          passionfruit.draw(FUSCHIA);
-        }
-        if(level == 2) {
-          passionfruit.initialize(9, 9);
-          passionfruit.draw(FUSCHIA);
-
-          orange.initialize(19, 14);
-          orange.draw(ORANGE);
-        }
-        if(level == 3) {
-          passionfruit.initialize(1, 14);
-          passionfruit.draw(FUSCHIA);
-          
-          orange.initialize(14, 6);
-          orange.draw(FUSCHIA);
-
-          cherry.initialize(9, 14);
-          cherry.draw(RED);
-        }
+        level_setup(1);
         
         counter = 0;
         
@@ -447,7 +459,6 @@ class Game {
     
     void update(int potentiometer_x, int potentiometer_y) {
       time = millis();
-      
       counter++;
      
       player.erase();
@@ -480,7 +491,7 @@ class Game {
 
       player.draw();
 
-      if(level == 1) {
+      /*if(level == 1) {
         eating_fruit(passionfruit);
       }
       if(level == 2) {
@@ -491,10 +502,12 @@ class Game {
         eating_fruit(passionfruit);
         eating_fruit(orange);
         eating_fruit(cherry);
+      } */
+      
+      if(get_level_cleared() == true) {
+        level_setup(level);        
       }
-      
-      get_level_cleared();
-      
+
       /* while (dove.get_x() == 0) {
         for (int count = 0; count < 18; count++) {
           dove.move();
@@ -507,10 +520,6 @@ class Game {
       } */
       
       clock_countdown();
-
-      if(get_level_cleared() == true) {
-        level++;
-      }
     }
     
   bool get_level_cleared() {
@@ -518,7 +527,7 @@ class Game {
       }
 
 private:
-  int level;
+  int level = 1;
   unsigned long time;
   unsigned long now;
   unsigned long counter;
@@ -533,21 +542,34 @@ private:
   
   bool level_cleared() {
     if(level == 1) {
-      if(time < 66000) {
+      //if(time <= 126000) {
         if(belly == 1) {
           if(player.get_x() == 27 && player.get_y() == 12) {
+            level++;
+            time = 0;
+            //level_setup(level);
+            return true;
+          }
+        }
+      //}
+    }
+    if(level == 2) {
+      if(time <= 126000) {
+        if(belly == 2) {
+          if(player.get_x() == 27 && player.get_y() == 12) {
+            level++;
+            time = 0;
+            level_setup(level);
             return true;
           }
         }
       }
     }
-    if(level == 2) {
-      if(belly == 2) {
-        return true;
-      }
-    }
     if(level == 3) {
       if(belly == 3) {
+        level++;
+        time = 0;
+        level_setup(level);
         return true;
       }
     }
